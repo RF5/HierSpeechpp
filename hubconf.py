@@ -66,7 +66,7 @@ def speechsr(pretrained=True, progress=True, output_sr=48000, device=None) -> Sy
         speechsr.h = h_sr
         speechsr.output_sr = 24000
         if pretrained: utils.load_checkpoint(str(sr24_path/'G_340000.pth'), speechsr, None)
-        
+    speechsr.dec.remove_weight_norm()
     speechsr = speechsr.to(device).eval()
     
     print(f"Loaded SpeechSR with {sum(param.numel() for param in speechsr.parameters()):,d} parameters.")
