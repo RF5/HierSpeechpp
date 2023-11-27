@@ -1,7 +1,6 @@
 import torch
 from torch import nn
 from torch.nn import functional as F
-import modules
 
 from torch.nn import Conv1d, ConvTranspose1d, AvgPool1d, Conv2d
 from torch.nn.utils import weight_norm, remove_weight_norm, spectral_norm
@@ -12,6 +11,9 @@ from einops import rearrange
 
 from alias_free_torch import *
 import activations
+
+
+LRELU_SLOPE = 0.1
 
 class AMPBlock0(torch.nn.Module):
     def __init__(self, channels, kernel_size=3, dilation=(1, 3, 5), activation=None):
