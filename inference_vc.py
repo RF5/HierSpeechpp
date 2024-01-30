@@ -4,7 +4,7 @@ import argparse
 import numpy as np
 from scipy.io.wavfile import write
 import torchaudio
-import utils
+import hierspeech_utils
 from Mels_preprocess import MelSpectrogramFixed
 from torch.nn import functional as F
 from hierspeechpp_speechsynthesizer import (
@@ -194,14 +194,14 @@ def model_load(a):
         speechsr = SpeechSR48(h_sr48.data.n_mel_channels,
             h_sr48.train.segment_size // h_sr48.data.hop_length,
             **h_sr48.model).cuda()
-        utils.load_checkpoint(a.ckpt_sr48, speechsr, None)
+        hierspeech_utils.load_checkpoint(a.ckpt_sr48, speechsr, None)
         speechsr.eval()
        
     elif a.output_sr == 24000:
         speechsr = SpeechSR24(h_sr.data.n_mel_channels,
         h_sr.train.segment_size // h_sr.data.hop_length,
         **h_sr.model).cuda()
-        utils.load_checkpoint(a.ckpt_sr, speechsr, None)
+        hierspeech_utils.load_checkpoint(a.ckpt_sr, speechsr, None)
         speechsr.eval()
       
     else:
@@ -243,10 +243,10 @@ def main():
     global device, hps, h_sr,h_sr48, hps_denoiser
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    hps = utils.get_hparams_from_file(os.path.join(os.path.split(a.ckpt)[0], 'config.json'))
-    h_sr = utils.get_hparams_from_file(os.path.join(os.path.split(a.ckpt_sr)[0], 'config.json') )
-    h_sr48 = utils.get_hparams_from_file(os.path.join(os.path.split(a.ckpt_sr48)[0], 'config.json') )
-    hps_denoiser = utils.get_hparams_from_file(os.path.join(os.path.split(a.denoiser_ckpt)[0], 'config.json'))
+    hps = hierspeech_utils.get_hparams_from_file(os.path.join(os.path.split(a.ckpt)[0], 'config.json'))
+    h_sr = hierspeech_utils.get_hparams_from_file(os.path.join(os.path.split(a.ckpt_sr)[0], 'config.json') )
+    h_sr48 = hierspeech_utils.get_hparams_from_file(os.path.join(os.path.split(a.ckpt_sr48)[0], 'config.json') )
+    hps_denoiser = hierspeech_utils.get_hparams_from_file(os.path.join(os.path.split(a.denoiser_ckpt)[0], 'config.json'))
 
     inference(a)
 

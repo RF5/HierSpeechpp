@@ -10,7 +10,7 @@ import torch.nn.functional as F
 import torchaudio
 from torch import Tensor
 
-import utils
+import hierspeech_utils
 from speechsr48k.speechsr import SynthesizerTrn
 from speechsr24k.speechsr import SynthesizerTrn as SpeechSR24
 from speechsr48k.speechsr import SynthesizerTrn as SpeechSR48
@@ -46,9 +46,9 @@ def speechsr(pretrained=True, progress=True, output_sr=48000, device=None) -> Sy
 
     # h_sr = utils.get_hparams_from_file(os.path.join(os.path.split(a.ckpt_sr)[0], 'config.json') )
     sr48_path = Path(__file__).parent/'speechsr48k'
-    h_sr48 = utils.get_hparams_from_file(str(sr48_path/'config.json'))
+    h_sr48 = hierspeech_utils.get_hparams_from_file(str(sr48_path/'config.json'))
     sr24_path = Path(__file__).parent/'speechsr24k'
-    h_sr = utils.get_hparams_from_file(str(sr24_path/'config.json'))
+    h_sr = hierspeech_utils.get_hparams_from_file(str(sr24_path/'config.json'))
 
 
     if output_sr == 48000:
@@ -57,7 +57,7 @@ def speechsr(pretrained=True, progress=True, output_sr=48000, device=None) -> Sy
             **h_sr48.model)
         speechsr.h = h_sr48
         speechsr.output_sr = 48000
-        if pretrained: utils.load_checkpoint(str(sr48_path/'G_100000.pth'), speechsr, None)
+        if pretrained: hierspeech_utils.load_checkpoint(str(sr48_path/'G_100000.pth'), speechsr, None)
     else:
         # 24000 Hz
         speechsr = SpeechSR24(h_sr.data.n_mel_channels,
@@ -65,7 +65,7 @@ def speechsr(pretrained=True, progress=True, output_sr=48000, device=None) -> Sy
         **h_sr.model)
         speechsr.h = h_sr
         speechsr.output_sr = 24000
-        if pretrained: utils.load_checkpoint(str(sr24_path/'G_340000.pth'), speechsr, None)
+        if pretrained: hierspeech_utils.load_checkpoint(str(sr24_path/'G_340000.pth'), speechsr, None)
     speechsr.dec.remove_weight_norm()
     speechsr = speechsr.to(device).eval()
     
